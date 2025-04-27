@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MainApp()); //ytrsa
+  runApp(MainApp()); // prueba 2
 }
 
 class MainApp extends StatefulWidget {
