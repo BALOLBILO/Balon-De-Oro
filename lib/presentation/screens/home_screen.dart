@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_tp/entities/BalonOro.dart';
+import 'package:flutter_application_tp/presentation/provider_cambiar_jugador.dart';
+import 'package:flutter_application_tp/presentation/provider_copia_lista.dart';
+import 'package:flutter_application_tp/presentation/provider_original.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_application_tp/presentation/provider_balon_oro.dart';
@@ -27,6 +31,30 @@ class HomeScreen extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ListTile(
+                            leading: Icon(Icons.sort),
+                            title: Text('Ordenar Lista'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              final listaJugador = ref.read(lista);
+                              final listaEnumerada = BalonOro.listaEnumerada(
+                                listaJugador,
+                              );
+
+                              ref.read(lista.notifier).state = listaEnumerada;
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.swap_calls),
+                            title: Text('Cambiar'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              ref.read(jugadorCambiar.notifier).state =
+                                  rankBalonOro[index];
+
+                              context.push('/cambiar');
+                            },
+                          ),
+                          ListTile(
                             leading: Icon(Icons.edit),
                             title: Text('Editar'),
                             onTap: () {
@@ -39,9 +67,40 @@ class HomeScreen extends ConsumerWidget {
                             },
                           ),
                           ListTile(
+                            leading: Icon(Icons.warning),
+                            title: Text('Volver a original'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Confirmar'),
+                                  duration: Duration(seconds: 5),
+                                  backgroundColor: const Color.fromARGB(
+                                    96,
+                                    231,
+                                    19,
+                                    19,
+                                  ),
+                                  action: SnackBarAction(
+                                    label: 'Si',
+                                    onPressed: () {
+                                      final listah = ref.read(listaOriginal);
+                                      final listaOrganizada =
+                                          BalonOro.listaEnumerada(listah);
+                                      ref.read(lista.notifier).state =
+                                          listaOrganizada;
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
                             leading: Icon(Icons.delete),
                             title: Text('Eliminar'),
                             onTap: () {
+                              ref.read(listaSeguridad.notifier).state =
+                                  rankBalonOro;
                               final listaActual = ref.read(lista);
                               final nuevaLista = [
                                 for (final jugador in listaActual)
@@ -50,6 +109,27 @@ class HomeScreen extends ConsumerWidget {
                               ];
                               ref.read(lista.notifier).state = nuevaLista;
                               Navigator.pop(context);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Jugador eliminado'),
+                                  duration: Duration(seconds: 3),
+                                  backgroundColor: const Color.fromARGB(
+                                    96,
+                                    231,
+                                    19,
+                                    19,
+                                  ),
+                                  action: SnackBarAction(
+                                    label: 'Deshacer',
+                                    onPressed: () {
+                                      ref.read(lista.notifier).state = ref.read(
+                                        listaSeguridad,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ],

@@ -18,89 +18,116 @@ class _AgregarScreenState extends ConsumerState<AgregarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final listaJugadores = ref.read(lista);
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 200,
-              child: TextField(
-                controller: controller1,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  label: Text('nombre'),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            SizedBox(
-              width: 200,
-              child: TextField(
-                controller: controller2,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  label: Text('posición'),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            SizedBox(
-              width: 200,
-              child: TextField(
-                controller: controller3,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  label: Text('url'),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                String nombre = controller1.text;
-                String posiciontext = controller2.text;
-                String url = controller3.text;
-                int? posicion = int.tryParse(posiciontext);
+      appBar: AppBar(title: Text('Agregar')),
 
-                if (nombre.isEmpty || posicion == null || url.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("campo vacio"),
-                      duration: Duration(seconds: 3),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                } else {
-                  final nuevo = BalonOro(
-                    name: nombre,
-                    posicion: posicion,
-                    url: url,
-                  );
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 200,
+                child: TextField(
+                  controller: controller1,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    label: Text('Nombre'),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              SizedBox(
+                width: 200,
+                child: TextField(
+                  controller: controller2,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    label: Text('Posición'),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              SizedBox(
+                width: 200,
+                child: TextField(
+                  controller: controller3,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    label: Text('Url'),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  String nombre = controller1.text;
+                  String posiciontext = controller2.text;
+                  String url = controller3.text;
+                  int? posicion = int.tryParse(posiciontext);
 
-                  final listaActual = ref.read(lista);
-                  if (BalonOro.posicionRepetida2(listaActual, posicion)) {
+                  if (nombre.isEmpty || posicion == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Posicion repetida"),
+                        content: Text("campo vacio"),
                         duration: Duration(seconds: 3),
                         backgroundColor: Colors.red,
                       ),
                     );
                   } else {
-                    final listaNueva = List<BalonOro>.from(listaActual);
-                    listaNueva.add(nuevo);
-                    final listaOrdenada = BalonOro.ordenar(listaNueva);
+                    if (url.isEmpty) {
+                      url =
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGgNXbKwWZKsDgN4qg8RaMQgvuN6STDZ_Vdw&s';
+                    }
+                    final nuevo = BalonOro(
+                      name: nombre,
+                      posicion: posicion,
+                      url: url,
+                    );
 
-                    ref.read(lista.notifier).state = listaOrdenada;
+                    final listaActual = ref.read(lista);
+                    if (BalonOro.posicionRepetida2(listaActual, posicion)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Posicion repetida"),
+                          duration: Duration(seconds: 3),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else {
+                      final listaNueva = List<BalonOro>.from(listaActual);
+                      listaNueva.add(nuevo);
+                      final listaOrdenada = BalonOro.ordenar(listaNueva);
 
-                    context.go('/home');
+                      ref.read(lista.notifier).state = listaOrdenada;
+
+                      context.go('/home');
+                    }
                   }
-                }
-              },
-              child: const Text('Agregar'),
-            ),
-          ],
+                },
+                child: const Text('Agregar'),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: listaJugadores.length,
+                itemBuilder: (context, index) {
+                  final jugador = listaJugadores[index];
+                  return ListTile(
+                    title: Text(jugador.name),
+                    subtitle: Text('Posición: ${jugador.posicion}'),
+                    leading: Image.network(
+                      jugador.url,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

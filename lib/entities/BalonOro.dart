@@ -34,4 +34,14 @@ class BalonOro {
 
     return false;
   }
+
+  static List<BalonOro> listaEnumerada(List<BalonOro> lista) {
+    final listaOrdenada = BalonOro.ordenar(lista);
+    int numero = 1;
+    for (final jugador in listaOrdenada) {
+      jugador.posicion = numero;
+      numero++;
+    }
+    return listaOrdenada;
+  }
 }
