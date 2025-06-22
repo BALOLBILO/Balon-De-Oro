@@ -35,12 +35,29 @@ class HomeScreen extends ConsumerWidget {
                             title: Text('Ordenar Lista'),
                             onTap: () {
                               Navigator.pop(context);
-                              final listaJugador = ref.read(lista);
-                              final listaEnumerada = BalonOro.listaEnumerada(
-                                listaJugador,
-                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Confirmar'),
+                                  duration: Duration(seconds: 5),
+                                  backgroundColor: const Color.fromARGB(
+                                    96,
+                                    231,
+                                    19,
+                                    19,
+                                  ),
+                                  action: SnackBarAction(
+                                    label: 'Si',
+                                    onPressed: () {
+                                      final listaJugador = ref.read(lista);
+                                      final listaEnumerada =
+                                          BalonOro.listaEnumerada(listaJugador);
 
-                              ref.read(lista.notifier).state = listaEnumerada;
+                                      ref.read(lista.notifier).state =
+                                          listaEnumerada;
+                                    },
+                                  ),
+                                ),
+                              );
                             },
                           ),
                           ListTile(
@@ -84,11 +101,9 @@ class HomeScreen extends ConsumerWidget {
                                   action: SnackBarAction(
                                     label: 'Si',
                                     onPressed: () {
-                                      final listah = ref.read(listaOriginal);
-                                      final listaOrganizada =
-                                          BalonOro.listaEnumerada(listah);
-                                      ref.read(lista.notifier).state =
-                                          listaOrganizada;
+                                      final listah = BalonOro.listaOriginal();
+
+                                      ref.read(lista.notifier).state = listah;
                                     },
                                   ),
                                 ),
