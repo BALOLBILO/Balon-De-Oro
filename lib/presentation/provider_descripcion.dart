@@ -1,7 +1,7 @@
 import 'package:flutter_application_tp/entities/BalonOro.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final jugadorCambiar = StateProvider<BalonOro>((ref) {
+final jugadorDescripcion = StateProvider<BalonOro>((ref) {
   return BalonOro(
     name: 'Jugador por defecto',
     descripcion: "descrpicion por defecto",

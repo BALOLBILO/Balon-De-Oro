@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_tp/entities/BalonOro.dart';
 import 'package:flutter_application_tp/presentation/provider_cambiar_jugador.dart';
 import 'package:flutter_application_tp/presentation/provider_copia_lista.dart';
-import 'package:flutter_application_tp/presentation/provider_original.dart';
+import 'package:flutter_application_tp/presentation/provider_descripcion.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_application_tp/presentation/provider_balon_oro.dart';
+import 'package:flutter_application_tp/presentation/provider_descripcion.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -21,6 +22,11 @@ class HomeScreen extends ConsumerWidget {
         itemBuilder: (context, index) {
           return Card(
             child: ListTile(
+              onTap: () {
+                ref.read(jugadorDescripcion.notifier).state =
+                    rankBalonOro[index];
+                context.push('/descripcion');
+              },
               onLongPress: () {
                 showModalBottomSheet(
                   context: context,
@@ -31,13 +37,39 @@ class HomeScreen extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ListTile(
+                            leading: Icon(Icons.edit),
+                            title: Text('Editar'),
+                            onTap: () {
+                              Navigator.pop(context);
+
+                              context.push(
+                                '/editar',
+                                extra: rankBalonOro[index],
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.swap_calls),
+                            title: Text('Cambiar'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              ref.read(jugadorCambiar.notifier).state =
+                                  rankBalonOro[index];
+
+                              context.push('/cambiar');
+                            },
+                          ),
+
+                          ListTile(
                             leading: Icon(Icons.sort),
                             title: Text('Ordenar Lista'),
                             onTap: () {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text('Confirmar'),
+                                  content: const Text(
+                                    '¿Estas seguro que deseas ordenar la lista?',
+                                  ),
                                   duration: Duration(seconds: 5),
                                   backgroundColor: const Color.fromARGB(
                                     96,
@@ -61,36 +93,15 @@ class HomeScreen extends ConsumerWidget {
                             },
                           ),
                           ListTile(
-                            leading: Icon(Icons.swap_calls),
-                            title: Text('Cambiar'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              ref.read(jugadorCambiar.notifier).state =
-                                  rankBalonOro[index];
-
-                              context.push('/cambiar');
-                            },
-                          ),
-                          ListTile(
-                            leading: Icon(Icons.edit),
-                            title: Text('Editar'),
-                            onTap: () {
-                              Navigator.pop(context);
-
-                              context.push(
-                                '/editar',
-                                extra: rankBalonOro[index],
-                              );
-                            },
-                          ),
-                          ListTile(
                             leading: Icon(Icons.warning),
                             title: Text('Volver a original'),
                             onTap: () {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text('Confirmar'),
+                                  content: const Text(
+                                    '¿Estas seguro que deseas volver a la lista original?',
+                                  ),
                                   duration: Duration(seconds: 5),
                                   backgroundColor: const Color.fromARGB(
                                     96,

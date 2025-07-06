@@ -17,6 +17,7 @@ class _EditarScreenState extends ConsumerState<EditarScreen> {
   final TextEditingController controller1 = TextEditingController();
   final TextEditingController controller2 = TextEditingController();
   final TextEditingController controller3 = TextEditingController();
+  final TextEditingController controller4 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +67,17 @@ class _EditarScreenState extends ConsumerState<EditarScreen> {
                 SizedBox(
                   width: 200,
                   child: TextField(
+                    controller: controller4,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      label: Text('descripcion'),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: 200,
+                  child: TextField(
                     controller: controller3,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
@@ -79,6 +91,7 @@ class _EditarScreenState extends ConsumerState<EditarScreen> {
                     String nombre = controller1.text;
                     String posiciontext = controller2.text;
                     String url = controller3.text;
+                    String descripcion = controller4.text;
                     int? posicionNullable = int.tryParse(posiciontext);
                     int posicion = posicionNullable ?? jugador.posicion;
 
@@ -86,6 +99,9 @@ class _EditarScreenState extends ConsumerState<EditarScreen> {
 
                     if (nombre.isEmpty) {
                       nombre = jugador.name;
+                    }
+                    if (descripcion.isEmpty) {
+                      descripcion = jugador.descripcion;
                     }
 
                     if (url.isEmpty) {
@@ -107,6 +123,7 @@ class _EditarScreenState extends ConsumerState<EditarScreen> {
                       BalonOro editar = BalonOro(
                         name: nombre,
                         posicion: posicion,
+                        descripcion: descripcion,
                         url: url,
                       );
 

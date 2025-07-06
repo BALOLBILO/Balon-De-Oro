@@ -10,38 +10,33 @@ class InicioScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<InicioScreen> {
-  List<Usuario> listaUsuarios = [];
+  List<Usuario> listaUsuarios = [
+    Usuario(
+      name: 'balo',
+      pasrword: '123',
+      direccion: 'morelos 619',
+      gmail: 'balobilo@gmail.com',
+    ),
+    Usuario(
+      name: 'papa',
+      pasrword: '321',
+      direccion: 'morelos 196',
+      gmail: 'papa@gmail.com',
+    ),
+    Usuario(
+      name: 'lala',
+      pasrword: '213',
+      direccion: 'morelos 916',
+      gmail: 'lala@gmail.com',
+    ),
+    Usuario(
+      name: 'sasa',
+      pasrword: '231',
+      direccion: 'morelos 691',
+      gmail: 'sasa@gmail.com',
+    ),
+  ];
   @override
-  void initState() {
-    super.initState();
-    listaUsuarios = [
-      Usuario(
-        name: 'balo',
-        pasrword: '123',
-        direccion: 'morelos 619',
-        gmail: 'balobilo@gmail.com',
-      ),
-      Usuario(
-        name: 'papa',
-        pasrword: '321',
-        direccion: 'morelos 196',
-        gmail: 'papa@gmail.com',
-      ),
-      Usuario(
-        name: 'lala',
-        pasrword: '213',
-        direccion: 'morelos 916',
-        gmail: 'lala@gmail.com',
-      ),
-      Usuario(
-        name: 'sasa',
-        pasrword: '231',
-        direccion: 'morelos 691',
-        gmail: 'sasa@gmail.com',
-      ),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

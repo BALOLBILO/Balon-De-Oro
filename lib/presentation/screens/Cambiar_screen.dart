@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_tp/entities/BalonOro.dart';
 import 'package:flutter_application_tp/presentation/provider_balon_oro.dart';
 import 'package:flutter_application_tp/presentation/provider_cambiar_jugador.dart';
+import 'package:flutter_application_tp/presentation/provider_cambiar_jugador2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,9 +12,9 @@ class CambiarScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cambiarJugador = ref.read(jugadorCambiar);
-
-    final TextEditingController controller1 = TextEditingController();
     final listaJugadores = ref.read(lista);
+    final posicionSeleccionada = ref.watch(posicionSeleccionadaProvider);
+    final texto = ref.watch(textoSeleccionProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Cambiar')),
@@ -25,58 +26,42 @@ class CambiarScreen extends ConsumerWidget {
             children: [
               Text(
                 'Jugador a cambiar: ${cambiarJugador.name} (Posición ${cambiarJugador.posicion})',
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 200,
-                child: TextField(
-                  controller: controller1,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    label: Text('Posición a cambiar'),
-                  ),
-                ),
+                style: TextStyle(fontSize: 11),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  String posicionText = controller1.text;
-                  int? posicion = int.tryParse(posicionText);
-                  if (posicion == null || posicionText.isEmpty) {
+                  if (posicionSeleccionada == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Campo vacío o inválido"),
+                        content: Text("No elegiste a nadie"),
                         duration: Duration(seconds: 3),
                         backgroundColor: Colors.red,
                       ),
                     );
-                  } else if (BalonOro.posicionRepetida1(
-                    listaJugadores,
-                    posicion,
-                    cambiarJugador.posicion,
-                  )) {
+                  } else {
                     for (final jugador in listaJugadores) {
-                      if (jugador.posicion == posicion) {
+                      if (jugador.posicion == posicionSeleccionada) {
+                        final temp = jugador.posicion;
                         jugador.posicion = cambiarJugador.posicion;
-                        cambiarJugador.posicion = posicion;
+                        cambiarJugador.posicion = temp;
+                        break;
                       }
                     }
 
                     final listaOrdenada = BalonOro.ordenar(listaJugadores);
                     ref.read(lista.notifier).state = listaOrdenada;
+                    ref.read(posicionSeleccionadaProvider.notifier).state =
+                        null;
+                    ref.read(textoSeleccionProvider.notifier).state =
+                        'Selecciona jugador';
                     context.go('/home');
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("La posición no existe o es la misma"),
-                        duration: Duration(seconds: 3),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
                   }
                 },
                 child: const Text('Cambiar'),
               ),
+              const SizedBox(height: 20),
+              Text(texto),
               const SizedBox(height: 30),
               const Text('Lista actual de jugadores:'),
               const SizedBox(height: 10),
@@ -87,6 +72,12 @@ class CambiarScreen extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final jugador = listaJugadores[index];
                   return ListTile(
+                    onTap: () {
+                      ref.read(posicionSeleccionadaProvider.notifier).state =
+                          jugador.posicion;
+                      ref.read(textoSeleccionProvider.notifier).state =
+                          'Seleccionaste: ${jugador.name}';
+                    },
                     title: Text(jugador.name),
                     subtitle: Text('Posición: ${jugador.posicion}'),
                     leading: Image.network(

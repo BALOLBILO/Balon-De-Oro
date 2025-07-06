@@ -2,6 +2,7 @@ import 'package:flutter_application_tp/entities/BalonOro.dart';
 import 'package:flutter_application_tp/entities/usuarios.dart';
 import 'package:flutter_application_tp/presentation/screens/Agregar_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/Cambiar_screen.dart';
+import 'package:flutter_application_tp/presentation/screens/Descripcion_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/Editar_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/Inicio_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/home_screen.dart';
@@ -42,6 +43,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/cambiar',
       builder: (context, state) => const CambiarScreen(),
+    ),
+    GoRoute(
+      path: '/descripcion',
+      builder: (context, state) => const DescripcionScreen(),
     ),
   ],
 );

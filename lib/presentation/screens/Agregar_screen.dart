@@ -15,6 +15,7 @@ class _AgregarScreenState extends ConsumerState<AgregarScreen> {
   final TextEditingController controller1 = TextEditingController();
   final TextEditingController controller2 = TextEditingController();
   final TextEditingController controller3 = TextEditingController();
+  final TextEditingController controller4 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,17 @@ class _AgregarScreenState extends ConsumerState<AgregarScreen> {
               SizedBox(
                 width: 200,
                 child: TextField(
+                  controller: controller4,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    label: Text('Descripcion'),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              SizedBox(
+                width: 200,
+                child: TextField(
                   controller: controller3,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
@@ -65,9 +77,12 @@ class _AgregarScreenState extends ConsumerState<AgregarScreen> {
                   String nombre = controller1.text;
                   String posiciontext = controller2.text;
                   String url = controller3.text;
+                  String descripcion = controller4.text;
                   int? posicion = int.tryParse(posiciontext);
 
-                  if (nombre.isEmpty || posicion == null) {
+                  if (nombre.isEmpty ||
+                      posicion == null ||
+                      descripcion.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("campo vacio"),
@@ -83,6 +98,7 @@ class _AgregarScreenState extends ConsumerState<AgregarScreen> {
                     final nuevo = BalonOro(
                       name: nombre,
                       posicion: posicion,
+                      descripcion: descripcion,
                       url: url,
                     );
 
