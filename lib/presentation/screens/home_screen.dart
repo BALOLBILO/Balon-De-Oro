@@ -6,7 +6,6 @@ import 'package:flutter_application_tp/presentation/provider_descripcion.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_application_tp/presentation/provider_balon_oro.dart';
-import 'package:flutter_application_tp/presentation/provider_descripcion.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
