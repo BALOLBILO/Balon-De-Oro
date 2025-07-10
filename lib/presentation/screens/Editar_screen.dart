@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_tp/entities/BalonOro.dart';
+import 'package:flutter_application_tp/presentation/provider_editar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_tp/presentation/provider_balon_oro.dart';
 import 'package:go_router/go_router.dart';
 
 class EditarScreen extends ConsumerStatefulWidget {
-  final BalonOro jugadorEditar;
-
-  const EditarScreen({super.key, required this.jugadorEditar});
+  const EditarScreen({super.key});
 
   @override
   ConsumerState<EditarScreen> createState() => _EditarScreenState();
 }
 
 class _EditarScreenState extends ConsumerState<EditarScreen> {
-  final TextEditingController controller1 = TextEditingController();
-  final TextEditingController controller2 = TextEditingController();
-  final TextEditingController controller3 = TextEditingController();
-  final TextEditingController controller4 = TextEditingController();
+  late final TextEditingController controller1;
+  late final TextEditingController controller2;
+  late final TextEditingController controller3;
+  late final TextEditingController controller4;
+  bool _initialized = false;
 
   @override
   Widget build(BuildContext context) {
-    final jugador = widget.jugadorEditar;
+    final jugador = ref.watch(jugadorEditar);
     final listaJugadores = ref.read(lista);
+    if (!_initialized) {
+      controller1 = TextEditingController(text: jugador.name);
+      controller2 = TextEditingController(text: jugador.posicion.toString());
+      controller3 = TextEditingController(text: jugador.url);
+      controller4 = TextEditingController(text: jugador.descripcion);
+      _initialized = true;
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text('Editar: ${jugador.name}')),
       body: SingleChildScrollView(

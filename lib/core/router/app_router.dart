@@ -33,13 +33,7 @@ final GoRouter appRouter = GoRouter(
       path: '/agregar',
       builder: (context, state) => const AgregarScreen(),
     ),
-    GoRoute(
-      path: '/editar',
-      builder: (context, state) {
-        final jugador = state.extra as BalonOro;
-        return EditarScreen(jugadorEditar: jugador);
-      },
-    ),
+    GoRoute(path: '/editar', builder: (context, state) => const EditarScreen()),
     GoRoute(
       path: '/cambiar',
       builder: (context, state) => const CambiarScreen(),

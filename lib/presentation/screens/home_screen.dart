@@ -3,6 +3,7 @@ import 'package:flutter_application_tp/entities/BalonOro.dart';
 import 'package:flutter_application_tp/presentation/provider_cambiar_jugador.dart';
 import 'package:flutter_application_tp/presentation/provider_copia_lista.dart';
 import 'package:flutter_application_tp/presentation/provider_descripcion.dart';
+import 'package:flutter_application_tp/presentation/provider_editar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_application_tp/presentation/provider_balon_oro.dart';
@@ -40,11 +41,10 @@ class HomeScreen extends ConsumerWidget {
                             title: Text('Editar'),
                             onTap: () {
                               Navigator.pop(context);
+                              ref.read(jugadorEditar.notifier).state =
+                                  rankBalonOro[index];
 
-                              context.push(
-                                '/editar',
-                                extra: rankBalonOro[index],
-                              );
+                              context.push('/editar');
                             },
                           ),
                           ListTile(
