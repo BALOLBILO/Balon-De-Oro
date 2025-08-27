@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "447667516315",
+    "project_id": "balonoro-a955b",
+    "storage_bucket": "balonoro-a955b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447667516315:android:639e35b1d7e5208cb6e73e",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_tp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHedaQ9vlzucqZv6z3Fz5JyXyxF1ktGRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
