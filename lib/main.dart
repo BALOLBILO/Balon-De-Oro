@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_tp/core/router/app_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  runApp(ProviderScope(child: MainApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Android lee android/app/google-services.json
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
-
   @override
   State<MainApp> createState() => _MainAppState();
 }

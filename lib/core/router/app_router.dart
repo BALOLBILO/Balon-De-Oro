@@ -4,13 +4,14 @@ import 'package:flutter_application_tp/presentation/screens/Cambiar_screen.dart'
 import 'package:flutter_application_tp/presentation/screens/Descripcion_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/Editar_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/Inicio_screen.dart';
+import 'package:flutter_application_tp/presentation/screens/firebase_prueba_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/home_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/login_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/registrarse_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/inicio',
+  initialLocation: '/test',
   routes: [
     GoRoute(
       path: '/login',
@@ -40,6 +41,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/descripcion',
       builder: (context, state) => const DescripcionScreen(),
+    ),
+    GoRoute(
+      path: '/test',
+      builder: (context, state) => const TestFirestorePage(),
     ),
   ],
 );
