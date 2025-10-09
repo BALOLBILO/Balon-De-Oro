@@ -11,30 +11,10 @@ class InicioScreen extends StatefulWidget {
 
 class _MyWidgetState extends State<InicioScreen> {
   List<Usuario> listaUsuarios = [
-    Usuario(
-      name: 'balo',
-      pasrword: '123',
-      direccion: 'morelos 619',
-      gmail: 'balobilo@gmail.com',
-    ),
-    Usuario(
-      name: 'papa',
-      pasrword: '321',
-      direccion: 'morelos 196',
-      gmail: 'papa@gmail.com',
-    ),
-    Usuario(
-      name: 'lala',
-      pasrword: '213',
-      direccion: 'morelos 916',
-      gmail: 'lala@gmail.com',
-    ),
-    Usuario(
-      name: 'sasa',
-      pasrword: '231',
-      direccion: 'morelos 691',
-      gmail: 'sasa@gmail.com',
-    ),
+    Usuario(password: '123', gmail: 'balobilo@gmail.com'),
+    Usuario(password: '321', gmail: 'papa@gmail.com'),
+    Usuario(password: '213', gmail: 'lala@gmail.com'),
+    Usuario(password: '231', gmail: 'sasa@gmail.com'),
   ];
   @override
   @override
@@ -47,14 +27,14 @@ class _MyWidgetState extends State<InicioScreen> {
           children: [
             ElevatedButton(
               onPressed: () {
-                context.push('/login', extra: listaUsuarios);
+                context.push('/login');
               },
               child: Text("Iniciar Sesión"),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                context.push('/registrarse', extra: listaUsuarios);
+                context.push('/registrarse');
               },
               child: Text("Crear sesión"),
             ),

@@ -1,22 +1,17 @@
 class Usuario {
-  String name;
-  String pasrword;
-  String gmail;
-  String direccion;
-  Usuario({
-    required this.name,
-    required this.pasrword,
-    required this.direccion,
-    required this.gmail,
-  });
+  final String gmail;
+  final String password;
 
-  static bool existeUsuario(String gmail, List<Usuario> listaUsuario) {
-    for (var Usuario in listaUsuario) {
-      if (Usuario.gmail == gmail) {
-        return true;
-      }
-    }
+  Usuario({required this.gmail, required this.password});
 
-    return false;
+  Map<String, dynamic> toMap() => {'gmail': gmail, 'password': password};
+
+  static Usuario fromMap(Map<String, dynamic> map) => Usuario(
+    gmail: map['gmail'] as String,
+    password: map['password'] as String,
+  );
+
+  static bool existeUsuario(String gmail, List<Usuario> lista) {
+    return lista.any((u) => u.gmail == gmail);
   }
 }

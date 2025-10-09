@@ -1,150 +1,140 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_tp/entities/usuarios.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends StatefulWidget {
-  final List<Usuario> listaUsuarios;
-  const LoginScreen({super.key, required this.listaUsuarios});
+import 'package:flutter_application_tp/presentation/usuarios_providers.dart';
+
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _MyWidgetState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _MyWidgetState extends State<LoginScreen> {
-  String a = "SE";
-  final TextEditingController controller1 = TextEditingController();
-  final TextEditingController controller2 = TextEditingController();
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final emailCtrl = TextEditingController();
+  final passCtrl = TextEditingController();
+  bool obscure = true;
+  bool loading = false;
 
-  bool mostrarContra = true;
-  List<Usuario> listaUsuarios = [];
   @override
-  void initState() {
-    super.initState();
-    listaUsuarios = widget.listaUsuarios;
+  void dispose() {
+    emailCtrl.dispose();
+    passCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _doLogin() async {
+    final email = emailCtrl.text.trim();
+    final pass = passCtrl.text;
+
+    if (email.isEmpty || pass.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Completá email y contraseña'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => loading = true);
+    try {
+      final usuario = await ref.read(usuarioRepoProvider).getByGmail(email);
+
+      if (usuario == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Usuario no encontrado'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (usuario.password != pass) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Contraseña incorrecta'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      ref.read(currentUserProvider.notifier).state = usuario;
+
+      context.go('/home');
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al iniciar sesión: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: const Text('Login')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 200,
-              child: TextField(
-                controller: controller1,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  label: Text('gmail'),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: emailCtrl,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Email',
+                  ),
                 ),
-              ),
-            ),
-
-            const SizedBox(height: 100),
-
-            SizedBox(
-              width: 200,
-              child: TextField(
-                controller: controller2,
-                obscureText: mostrarContra,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: 'Contraseña',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      a == "SE" ? Icons.visibility_off : Icons.visibility,
+                const SizedBox(height: 12),
+                TextField(
+                  controller: passCtrl,
+                  obscureText: obscure,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelText: 'Contraseña',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscure ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: () => setState(() => obscure = !obscure),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        if (mostrarContra == false) {
-                          mostrarContra = true;
-                          a = "SE";
-                        } else {
-                          mostrarContra = false;
-                          a = "HE";
-                        }
-                      });
-                    },
                   ),
                 ),
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            Builder(
-              builder:
-                  (context) => ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        String input1 = controller1.text;
-                        String input2 = controller2.text;
-
-                        Usuario loginUsuario = listaUsuarios.firstWhere(
-                          (u) => u.gmail == input1,
-                          orElse:
-                              () => Usuario(
-                                name: '',
-                                pasrword: '',
-                                direccion: '',
-                                gmail: '',
-                              ), // devuelve null si no encuentra
-                        );
-
-                        if (input1.isEmpty && input2.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("usuario y contraseña vacía"),
-                              duration: Duration(seconds: 3),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else if (input1.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Usuario vacío"),
-                              duration: Duration(seconds: 3),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else if (input2.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Contraseña vacía"),
-                              duration: Duration(seconds: 3),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else if (loginUsuario.gmail == '') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("No existe usuario"),
-                              duration: Duration(seconds: 3),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else if (input1 == loginUsuario.gmail &&
-                            input2 == loginUsuario.pasrword) {
-                          context.push('/home', extra: loginUsuario);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "usuario y/o contraseña incorrecta",
-                              ),
-                              duration: Duration(seconds: 3),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      });
-                    },
-                    child: const Text("login"),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: loading ? null : _doLogin,
+                    child:
+                        loading
+                            ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                            : const Text('Ingresar'),
                   ),
+                ),
+                const SizedBox(height: 8),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

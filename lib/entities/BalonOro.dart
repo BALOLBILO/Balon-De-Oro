@@ -11,6 +11,20 @@ class BalonOro {
     required this.descripcion,
   });
 
+  Map<String, dynamic> toMap() => {
+    'name': name,
+    'posicion': posicion,
+    'descripcion': descripcion,
+    'url': url,
+  };
+
+  static BalonOro fromMap(Map<String, dynamic> m) => BalonOro(
+    name: m['name'] as String,
+    posicion: (m['posicion'] as num).toInt(),
+    descripcion: m['descripcion'] as String,
+    url: m['url'] as String,
+  );
+
   static List<BalonOro> ordenar(List<BalonOro> lista) {
     final listaNueva = [...lista];
     listaNueva.sort((a, b) => a.posicion.compareTo(b.posicion));

@@ -11,23 +11,14 @@ import 'package:flutter_application_tp/presentation/screens/registrarse_screen.d
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/test',
+  initialLocation: '/inicio',
   routes: [
-    GoRoute(
-      path: '/login',
-      builder: (context, state) {
-        final usuarios = state.extra as List<Usuario>;
-        return LoginScreen(listaUsuarios: usuarios);
-      },
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
     GoRoute(path: '/inicio', builder: (context, state) => const InicioScreen()),
     GoRoute(
       path: '/registrarse',
-      builder: (context, state) {
-        final usuarios = state.extra as List<Usuario>;
-        return RegistrarseScreen(listaUsuarios: usuarios);
-      },
+      builder: (context, state) => const RegistrarseScreen(),
     ),
     GoRoute(
       path: '/agregar',
