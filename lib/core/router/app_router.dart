@@ -1,4 +1,3 @@
-import 'package:flutter_application_tp/entities/usuarios.dart';
 import 'package:flutter_application_tp/presentation/screens/Agregar_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/Cambiar_screen.dart';
 import 'package:flutter_application_tp/presentation/screens/Descripcion_screen.dart';
