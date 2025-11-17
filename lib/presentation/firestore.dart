@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_tp/data/balon_oro_repository.dart';
 import 'package:flutter_application_tp/entities/BalonOro.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_tp/presentation/provider_balon_oro.dart';
 import 'package:flutter_application_tp/presentation/auth_provider.dart';
 
