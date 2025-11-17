@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:flutter_application_tp/entities/usuarios.dart';
-import 'package:flutter_application_tp/presentation/usuarios_providers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegistrarseScreen extends ConsumerStatefulWidget {
   const RegistrarseScreen({super.key});
@@ -40,34 +39,48 @@ class _RegistrarseScreenState extends ConsumerState<RegistrarseScreen> {
     }
 
     setState(() => loading = true);
+
     try {
-      final repo = ref.read(usuarioRepoProvider);
+      // 1️⃣ Crear usuario en Firebase Auth
+      final authResult = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: pass);
 
-      final existente = await repo.getByGmail(email);
-      if (existente != null) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Ese email ya está registrado'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
+      final uid = authResult.user!.uid;
 
-      final nuevo = Usuario(gmail: email, password: pass);
-      await repo.save(nuevo);
+      // 2️⃣ Crear documento base en Firestore (opcional pero prolijo)
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cuenta creada. Iniciá sesión.')),
+        const SnackBar(
+          content: Text('Cuenta creada correctamente. Iniciá sesión.'),
+        ),
       );
+
       context.push('/login');
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      String msg = 'Error al crear cuenta';
+
+      if (e.code == 'email-already-in-use') {
+        msg = 'Ese email ya está registrado';
+      } else if (e.code == 'invalid-email') {
+        msg = 'Email inválido';
+      } else if (e.code == 'weak-password') {
+        msg = 'La contraseña es muy débil';
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error al registrarse: $e'),
+          content: Text('Error inesperado: $e'),
           backgroundColor: Colors.red,
         ),
       );

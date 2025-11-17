@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_tp/entities/BalonOro.dart';
 import 'package:flutter_application_tp/presentation/provider_cambiar_jugador.dart';
 import 'package:flutter_application_tp/presentation/provider_descripcion.dart';
@@ -21,7 +22,48 @@ class HomeScreen extends ConsumerWidget {
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (rankBalonOro) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Ranking Balón de Oro 2017')),
+          appBar: AppBar(
+            title: const Text('Ranking Balón de Oro 2017'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                tooltip: 'Cerrar sesión',
+                onPressed: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder:
+                        (_) => AlertDialog(
+                          title: const Text('Cerrar sesión'),
+                          content: const Text(
+                            '¿Seguro que querés cerrar sesión?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancelar'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('Cerrar sesión'),
+                            ),
+                          ],
+                        ),
+                  );
+
+                  if (confirm == true) {
+                    await FirebaseAuth.instance.signOut();
+
+                    /// 🔥 IMPORTANTE: invalidar el stream
+                    ref.invalidate(balonOroListStreamProvider);
+
+                    if (context.mounted) {
+                      context.go('/inicio'); // o donde esté tu pantalla inicial
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
           body: ListView.builder(
             itemCount: rankBalonOro.length,
             itemBuilder: (context, index) {
@@ -102,7 +144,7 @@ class _AccionesHome extends ConsumerWidget {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder:
-                    (context) => AlertDialog(
+                    (_) => AlertDialog(
                       title: const Text('Confirmar acción'),
                       content: const Text(
                         '¿Estás seguro de que querés ordenar la lista?',
@@ -123,7 +165,6 @@ class _AccionesHome extends ConsumerWidget {
               if (confirm == true) {
                 final ordenada = BalonOro.listaEnumerada(rankBalonOro);
                 await ref.read(balonOroRepoProvider).saveList(ordenada);
-
                 Navigator.pop(context);
               }
             },
@@ -135,11 +176,10 @@ class _AccionesHome extends ConsumerWidget {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder:
-                    (context) => AlertDialog(
+                    (_) => AlertDialog(
                       title: const Text('Confirmar acción'),
                       content: const Text(
-                        '¿Seguro que querés restaurar la lista original? '
-                        'Perderás los cambios actuales.',
+                        '¿Seguro que querés restaurar la lista original? Perderás los cambios.',
                       ),
                       actions: [
                         TextButton(
@@ -157,12 +197,10 @@ class _AccionesHome extends ConsumerWidget {
               if (confirm == true) {
                 final original = BalonOro.listaOriginal();
                 await ref.read(balonOroRepoProvider).saveList(original);
-
                 Navigator.pop(context);
               }
             },
           ),
-
           ListTile(
             leading: const Icon(Icons.delete),
             title: const Text('Eliminar'),
@@ -170,10 +208,10 @@ class _AccionesHome extends ConsumerWidget {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder:
-                    (context) => AlertDialog(
+                    (_) => AlertDialog(
                       title: const Text('Confirmar eliminación'),
                       content: Text(
-                        '¿Seguro que querés eliminar a "${rankBalonOro[index].name}" de la lista?',
+                        '¿Seguro que querés eliminar a "${rankBalonOro[index].name}"?',
                       ),
                       actions: [
                         TextButton(
@@ -196,9 +234,7 @@ class _AccionesHome extends ConsumerWidget {
                   for (final j in rankBalonOro)
                     if (j.name != rankBalonOro[index].name) j,
                 ];
-
                 await ref.read(balonOroRepoProvider).saveList(nueva);
-
                 Navigator.pop(context);
               }
             },

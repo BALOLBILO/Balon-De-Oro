@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:flutter_application_tp/presentation/usuarios_providers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -39,39 +38,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     setState(() => loading = true);
+
     try {
-      final usuario = await ref.read(usuarioRepoProvider).getByGmail(email);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: pass,
+      );
 
-      if (usuario == null) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Usuario no encontrado'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      if (usuario.password != pass) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Contraseña incorrecta'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      ref.read(currentUserProvider.notifier).state = usuario;
-
+      if (!mounted) return;
       context.go('/home');
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      String msg = 'Error al iniciar sesión';
+
+      if (e.code == 'user-not-found') msg = 'Usuario no encontrado';
+      if (e.code == 'wrong-password') msg = 'Contraseña incorrecta';
+      if (e.code == 'invalid-email') msg = 'Email inválido';
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error al iniciar sesión: $e'),
+          content: Text('Error inesperado'),
           backgroundColor: Colors.red,
         ),
       );
